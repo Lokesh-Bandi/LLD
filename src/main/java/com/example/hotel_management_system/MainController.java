@@ -6,6 +6,9 @@ import com.example.hotel_management_system.booking.BookingDTO;
 import com.example.hotel_management_system.booking.factory.Room;
 import com.example.hotel_management_system.booking.factory.RoomFactory;
 import com.example.hotel_management_system.payment.*;
+import com.example.hotel_management_system.payment.gateway.PaypalGateway;
+import com.example.hotel_management_system.payment.gateway.RazorpayGateway;
+import com.example.hotel_management_system.payment.gateway.StripeGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +20,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class MainController {
     @Autowired
     private RoomFactory roomFactory;
+
+    @Autowired
+    private RazorpayGateway razorpayGateway;
+
+    @Autowired
+    private StripeGateway stripeGateway;
+
+    @Autowired
+    private PaypalGateway paypalGateway;
 
     @PostMapping("/booking/create")
     public String createBooking(@RequestBody BookingDTO bookingDTO) {
@@ -44,10 +56,10 @@ public class MainController {
     @PostMapping("/payment/process")
     public String processPayment(@RequestBody PaymentDTO paymentDTO) {
         Payment payment = switch (paymentDTO.getPaymentType()) {
-            case "CREDIT_CARD" -> new CreditCardPayment(paymentDTO.getCardNumber(), paymentDTO.getCardHolderName());
+            case "CREDIT_CARD" -> new CreditCardPayment(paymentDTO.getCardNumber(), paymentDTO.getCardHolderName(), razorpayGateway);
             case "BANK_TRANSFER" ->
-                    new BankTransferPayment(paymentDTO.getBankAccountNumber(), paymentDTO.getBankName());
-            case "UPI" -> new UPIPayment(paymentDTO.getUpiId());
+                    new BankTransferPayment(paymentDTO.getBankAccountNumber(), paymentDTO.getBankName(), stripeGateway);
+            case "UPI" -> new UPIPayment(paymentDTO.getUpiId(), paypalGateway);
             default -> null;
         };
 
