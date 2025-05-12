@@ -15,6 +15,10 @@ import com.example.hotel_management_system.notification.factory.NotificationFact
 import com.example.hotel_management_system.notification.factory.abstractFactory.EmailNotificationFactory;
 import com.example.hotel_management_system.notification.factory.abstractFactory.PushNotificationFactory;
 import com.example.hotel_management_system.notification.factory.abstractFactory.SMSNotificationFactory;
+import com.example.hotel_management_system.notification.observer.NotificationService;
+import com.example.hotel_management_system.notification.observer.observers.EmailNotificationNotificationObserver;
+import com.example.hotel_management_system.notification.observer.observers.PushNotificationNotificationObserver;
+import com.example.hotel_management_system.notification.observer.observers.SMSNotificationNotificationObserver;
 import com.example.hotel_management_system.payment.*;
 import com.example.hotel_management_system.payment.gateway.PaypalGateway;
 import com.example.hotel_management_system.payment.gateway.RazorpayGateway;
@@ -38,6 +42,17 @@ public class MainController {
     @Autowired
     private PaypalGateway paypalGateway;
 
+    @Autowired
+    NotificationService notificationService;
+
+    public MainController(NotificationService notificationService) {
+        this.notificationService = notificationService;
+
+        this.notificationService.registerObserver(new EmailNotificationNotificationObserver());
+        this.notificationService.registerObserver(new SMSNotificationNotificationObserver());
+        this.notificationService.registerObserver(new PushNotificationNotificationObserver());
+
+    }
     @PostMapping("/booking/create")
     public String createBooking(@RequestBody BookingDTO bookingDTO) {
         try {
@@ -54,6 +69,15 @@ public class MainController {
                     .build();
 
             room.book();
+
+            NotificationDTO notificationDTO = new NotificationDTO.Builder()
+                                                        .recipient(booking.getCustomer().getEmail())
+                                                        .subject("Booking Confirmation!!")
+                                                        .message("Booking details : " + booking.toString())
+                                                        .build();
+
+
+            notificationService.sendNotification(notificationDTO);
 
             return booking.toString();
         } catch (Exception e) {
