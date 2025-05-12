@@ -9,6 +9,9 @@ public class Booking {
     private Room room;
     private Customer customer;
 
+    private String paymentType;
+    private double amount;
+
     private final boolean isWifiIncluded;
     private final boolean isBreakfastIncluded;
     private final boolean isParkingIncluded;
@@ -16,6 +19,8 @@ public class Booking {
     public Booking(Builder builder) {
         this.room = builder.room;
         this.customer = builder.customer;
+        this.paymentType = builder.paymentType;
+        this.amount = builder.amount;
         this.isWifiIncluded = builder.isWifiIncluded;
         this.isBreakfastIncluded = builder.isBreakfastIncluded;
         this.isParkingIncluded = builder.isParkingIncluded;
@@ -24,6 +29,9 @@ public class Booking {
     public static class Builder {
         private Room room;
         private Customer customer;
+
+        private String paymentType;
+        private double amount;
 
         private boolean isWifiIncluded;
         private boolean isBreakfastIncluded;
@@ -51,6 +59,16 @@ public class Booking {
 
         public Builder setParkingIncluded(boolean isParkingIncluded) {
             this.isParkingIncluded = isParkingIncluded;
+            return this;
+        }
+
+        public Builder setPaymentType(String paymentType) {
+            this.paymentType = paymentType;
+            return this;
+        }
+
+        public Builder setAmount(double amount) {
+            this.amount = amount;
             return this;
         }
 

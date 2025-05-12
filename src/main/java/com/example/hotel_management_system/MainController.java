@@ -5,15 +5,17 @@ import com.example.hotel_management_system.booking.Booking;
 import com.example.hotel_management_system.booking.BookingDTO;
 import com.example.hotel_management_system.booking.factory.Room;
 import com.example.hotel_management_system.booking.factory.RoomFactory;
+import com.example.hotel_management_system.invoice.HTMLInvoice;
+import com.example.hotel_management_system.invoice.Invoice;
+import com.example.hotel_management_system.invoice.PDFInvoice;
+import com.example.hotel_management_system.invoice.TextInvoice;
 import com.example.hotel_management_system.payment.*;
 import com.example.hotel_management_system.payment.gateway.PaypalGateway;
 import com.example.hotel_management_system.payment.gateway.RazorpayGateway;
 import com.example.hotel_management_system.payment.gateway.StripeGateway;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/hotel")
@@ -69,6 +71,38 @@ public class MainController {
 
         boolean isPaymentSuccessful = payment.pay(paymentDTO.getAmount());
         return isPaymentSuccessful ? "Payment is successful" : "Payment failed";
+    }
+
+    @GetMapping("/invoice/generate/{invoiceType}")
+    public ResponseEntity<String> generateInvoice(@PathVariable String invoiceType){
+        try {
+            Room room = roomFactory.createRoom("single", "244", 3455);
+            Customer customer = new Customer("Lokesh", "Lokesh@gmail.com", "1234567890", 2);
+
+            Booking booking = new Booking.Builder()
+                    .setRoom(room)
+                    .setCustomer(customer)
+                    .setPaymentType("UPI")
+                    .setAmount(3455)
+                    .setBreakfastIncluded(true)
+                    .setParkingIncluded(true)
+                    .build();
+
+
+            Invoice invoice = switch (invoiceType) {
+                case "text" -> new TextInvoice(booking);
+                case "pdf" -> new PDFInvoice(booking);
+                case "html" -> new HTMLInvoice(booking);
+                default -> throw new IllegalStateException("Unexpected value: " + invoiceType);
+            };
+
+            String invoiceDetails = invoice.generateInvoice();
+
+            return ResponseEntity.ok(invoiceDetails);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }
