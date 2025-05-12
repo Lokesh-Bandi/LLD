@@ -1,4 +1,4 @@
-package com.example.hotel_management_system.booking.factory;
+package com.example.hotel_management_system.room.factory;
 
 public class DoubleRoom extends Room{
 

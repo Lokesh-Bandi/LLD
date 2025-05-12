@@ -1,7 +1,7 @@
 package com.example.hotel_management_system.booking;
 
 import com.example.hotel_management_system.Customer.Customer;
-import com.example.hotel_management_system.booking.factory.Room;
+import com.example.hotel_management_system.room.factory.Room;
 import lombok.Data;
 
 @Data

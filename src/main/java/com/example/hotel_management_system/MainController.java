@@ -3,8 +3,10 @@ package com.example.hotel_management_system;
 import com.example.hotel_management_system.Customer.Customer;
 import com.example.hotel_management_system.booking.Booking;
 import com.example.hotel_management_system.booking.BookingDTO;
-import com.example.hotel_management_system.booking.factory.Room;
-import com.example.hotel_management_system.booking.factory.RoomFactory;
+import com.example.hotel_management_system.command.BookingManager;
+import com.example.hotel_management_system.command.commands.BookingCommand;
+import com.example.hotel_management_system.room.factory.Room;
+import com.example.hotel_management_system.room.factory.RoomFactory;
 import com.example.hotel_management_system.invoice.HTMLInvoice;
 import com.example.hotel_management_system.invoice.Invoice;
 import com.example.hotel_management_system.invoice.PDFInvoice;
@@ -45,6 +47,9 @@ public class MainController {
     @Autowired
     NotificationService notificationService;
 
+    @Autowired
+    BookingManager bookingManager;
+
     public MainController(NotificationService notificationService) {
         this.notificationService = notificationService;
 
@@ -54,7 +59,7 @@ public class MainController {
 
     }
     @PostMapping("/booking/create")
-    public String createBooking(@RequestBody BookingDTO bookingDTO) {
+    public ResponseEntity<String> createBooking(@RequestBody BookingDTO bookingDTO) {
         try {
             Room room = roomFactory.createRoom(bookingDTO.getRoomType(), bookingDTO.getRoomNumber(), bookingDTO.getPricePerNight());
 
@@ -68,8 +73,9 @@ public class MainController {
                     .setParkingIncluded(bookingDTO.isParkingIncluded())
                     .build();
 
-            room.book();
-
+            BookingCommand bookingCommand = new BookingCommand(booking);
+            bookingManager.executeCommand(bookingCommand);
+            bookingManager.undoLastCommand();
             NotificationDTO notificationDTO = new NotificationDTO.Builder()
                                                         .recipient(booking.getCustomer().getEmail())
                                                         .subject("Booking Confirmation!!")
@@ -79,7 +85,7 @@ public class MainController {
 
             notificationService.sendNotification(notificationDTO);
 
-            return booking.toString();
+            return ResponseEntity.ok(booking.toString());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

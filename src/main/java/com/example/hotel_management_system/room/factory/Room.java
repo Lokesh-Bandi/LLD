@@ -1,4 +1,4 @@
-package com.example.hotel_management_system.booking.factory;
+package com.example.hotel_management_system.room.factory;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ public abstract class Room {
     protected final String roomNumber;
     protected final String roomType;
     protected final double pricePerNight;
-    protected boolean isAvailable;
+    protected boolean isAvailable = true;
 
     public abstract void book();
     public abstract void cancelBooking();
