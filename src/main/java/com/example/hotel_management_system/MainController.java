@@ -9,6 +9,12 @@ import com.example.hotel_management_system.invoice.HTMLInvoice;
 import com.example.hotel_management_system.invoice.Invoice;
 import com.example.hotel_management_system.invoice.PDFInvoice;
 import com.example.hotel_management_system.invoice.TextInvoice;
+import com.example.hotel_management_system.notification.dto.NotificationDTO;
+import com.example.hotel_management_system.notification.factory.Notification;
+import com.example.hotel_management_system.notification.factory.NotificationFactory;
+import com.example.hotel_management_system.notification.factory.abstractFactory.EmailNotificationFactory;
+import com.example.hotel_management_system.notification.factory.abstractFactory.PushNotificationFactory;
+import com.example.hotel_management_system.notification.factory.abstractFactory.SMSNotificationFactory;
 import com.example.hotel_management_system.payment.*;
 import com.example.hotel_management_system.payment.gateway.PaypalGateway;
 import com.example.hotel_management_system.payment.gateway.RazorpayGateway;
@@ -105,4 +111,20 @@ public class MainController {
         }
     }
 
+    @PostMapping("/send/notification/{type}")
+    public ResponseEntity<String> sendNotification(@PathVariable String type, @RequestBody NotificationDTO notificationDTO) {
+
+        NotificationFactory notificationFactory = switch (type) {
+            case "email" ->
+                    new EmailNotificationFactory(notificationDTO.getRecipient(), notificationDTO.getSubject(), notificationDTO.getMessage());
+            case "sms" ->
+                    new SMSNotificationFactory(notificationDTO.getRecipient(), notificationDTO.getMessage());
+            case "push" -> new PushNotificationFactory(notificationDTO.getRecipient(), notificationDTO.getPayload());
+            default -> throw new RuntimeException("Invalid notification type");
+        };
+
+        Notification notification = notificationFactory.createNotification();
+        notification.sendNotification();
+        return ResponseEntity.ok(notification.toString());
+    }
 }
