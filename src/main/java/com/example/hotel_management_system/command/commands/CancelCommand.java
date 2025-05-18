@@ -1,9 +1,8 @@
 package com.example.hotel_management_system.command.commands;
 
 import com.example.hotel_management_system.booking.Booking;
-import com.example.hotel_management_system.room.factory.Room;
+import com.example.hotel_management_system.room.Room;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @AllArgsConstructor
 public class CancelCommand implements Command{

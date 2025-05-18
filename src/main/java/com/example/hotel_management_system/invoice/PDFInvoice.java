@@ -18,9 +18,7 @@ public class PDFInvoice implements Invoice{
                 "Room Type: " + booking.getRoom().getRoomType() + "\n" +
                 "Payment Type: " + booking.getPaymentType() + "\n" +
                 "Amount: $" + booking.getAmount() + "\n" +
-                "Wifi Included: " + (booking.isWifiIncluded() ? "Yes" : "No") + "\n" +
-                "Breakfast Included: " + (booking.isBreakfastIncluded() ? "Yes" : "No") + "\n" +
-                "Parking Included: " + (booking.isParkingIncluded() ? "Yes" : "No");
+                "Description: " + booking.getRoom().getDescription() + "\n" ;
 
         return invoiceDetails;
     }

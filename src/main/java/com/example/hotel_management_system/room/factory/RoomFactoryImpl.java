@@ -1,5 +1,9 @@
 package com.example.hotel_management_system.room.factory;
 
+import com.example.hotel_management_system.room.DoubleRoom;
+import com.example.hotel_management_system.room.Room;
+import com.example.hotel_management_system.room.SingleRoom;
+import com.example.hotel_management_system.room.SuiteRoom;
 import org.springframework.stereotype.Service;
 
 @Service

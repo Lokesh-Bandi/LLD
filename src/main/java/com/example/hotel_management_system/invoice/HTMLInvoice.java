@@ -19,9 +19,7 @@ public class HTMLInvoice implements Invoice{
                 "<p>Room Type: " + booking.getRoom().getRoomType() + "</p>" +
                 "<p>Payment Type: " + booking.getPaymentType() + "</p>" +
                 "<p>Amount: $" + booking.getAmount() + "</p>" +
-                "<p>Wifi Included: " + (booking.isWifiIncluded() ? "Yes" : "No") + "</p>" +
-                "<p>Breakfast Included: " + (booking.isBreakfastIncluded() ? "Yes" : "No") + "</p>" +
-                "<p>Parking Included: " + (booking.isParkingIncluded() ? "Yes" : "No") + "</p>" +
+                "<p>Description: " + booking.getRoom().getDescription() + "</p>" +
                 "</body></html>";
 
         return invoiceDetails;

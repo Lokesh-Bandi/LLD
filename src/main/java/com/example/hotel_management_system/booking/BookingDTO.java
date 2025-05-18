@@ -2,8 +2,6 @@ package com.example.hotel_management_system.booking;
 
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
 public class BookingDTO {
     private String roomNumber;
@@ -15,7 +13,7 @@ public class BookingDTO {
     private String customerPhoneNumber;
     private int headCount;
 
+    private boolean parkingRequired;
     private boolean breakfastIncluded;
     private boolean wifiIncluded;
-    private boolean parkingIncluded;
 }
