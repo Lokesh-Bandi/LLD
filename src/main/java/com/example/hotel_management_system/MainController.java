@@ -5,7 +5,10 @@ import com.example.hotel_management_system.booking.Booking;
 import com.example.hotel_management_system.booking.BookingDTO;
 import com.example.hotel_management_system.command.BookingManager;
 import com.example.hotel_management_system.command.commands.BookingCommand;
-import com.example.hotel_management_system.room.factory.Room;
+import com.example.hotel_management_system.decorators.WithBreakfastDecorator;
+import com.example.hotel_management_system.decorators.WithParkingDecorator;
+import com.example.hotel_management_system.decorators.WithWifiDecorator;
+import com.example.hotel_management_system.room.Room;
 import com.example.hotel_management_system.room.factory.RoomFactory;
 import com.example.hotel_management_system.invoice.HTMLInvoice;
 import com.example.hotel_management_system.invoice.Invoice;
@@ -62,28 +65,38 @@ public class MainController {
     public ResponseEntity<String> createBooking(@RequestBody BookingDTO bookingDTO) {
         try {
             Room room = roomFactory.createRoom(bookingDTO.getRoomType(), bookingDTO.getRoomNumber(), bookingDTO.getPricePerNight());
+            if(bookingDTO.isWifiIncluded()) {
+                room = new WithWifiDecorator(room);
+            }
+            if(bookingDTO.isBreakfastIncluded()) {
+                room = new WithBreakfastDecorator(room);
+            }
+            if(bookingDTO.isParkingRequired()) {
+                room = new WithParkingDecorator(room);
+            }
+
 
             Customer customer = new Customer(bookingDTO.getCustomerName(), bookingDTO.getCustomerEmail(), bookingDTO.getCustomerPhoneNumber(), bookingDTO.getHeadCount());
 
             Booking booking = new Booking.Builder()
                     .setRoom(room)
                     .setCustomer(customer)
-                    .setWifiIncluded(bookingDTO.isWifiIncluded())
-                    .setBreakfastIncluded(bookingDTO.isBreakfastIncluded())
-                    .setParkingIncluded(bookingDTO.isParkingIncluded())
                     .build();
 
             BookingCommand bookingCommand = new BookingCommand(booking);
             bookingManager.executeCommand(bookingCommand);
-            bookingManager.undoLastCommand();
+
             NotificationDTO notificationDTO = new NotificationDTO.Builder()
                                                         .recipient(booking.getCustomer().getEmail())
                                                         .subject("Booking Confirmation!!")
                                                         .message("Booking details : " + booking.toString())
+                                                        .payload("Room Description : " + booking.getRoom().getDescription())
                                                         .build();
 
-
+            System.out.println("Description : " + booking.getRoom().getDescription());
             notificationService.sendNotification(notificationDTO);
+
+
 
             return ResponseEntity.ok(booking.toString());
         } catch (Exception e) {
@@ -120,8 +133,6 @@ public class MainController {
                     .setCustomer(customer)
                     .setPaymentType("UPI")
                     .setAmount(3455)
-                    .setBreakfastIncluded(true)
-                    .setParkingIncluded(true)
                     .build();
 
 
