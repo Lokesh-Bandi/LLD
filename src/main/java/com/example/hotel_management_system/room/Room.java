@@ -11,11 +11,13 @@ public abstract class Room {
     protected String roomType;
     protected double pricePerNight;
     protected boolean isAvailable = true;
+    protected RoomContext roomContext;
 
     public Room(String roomNumber, String roomType, double pricePerNight) {
         this.roomNumber = roomNumber;
         this.roomType = roomType;
         this.pricePerNight = pricePerNight;
+        this.roomContext = new RoomContext();
     }
     public abstract void book();
     public abstract void cancelBooking();

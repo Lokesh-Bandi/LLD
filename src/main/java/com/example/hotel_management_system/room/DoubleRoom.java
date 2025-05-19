@@ -8,20 +8,12 @@ public class DoubleRoom extends Room{
 
     @Override
     public void book() {
-        // Logic to book a double room
-        if(!isAvailable){
-            System.out.println("Double room is not available.");
-        } else {
-            System.out.println("Booking double room..." + roomNumber);
-            isAvailable = false;
-        }
+        this.roomContext.book();
     }
 
     @Override
     public void cancelBooking() {
-        // Logic to cancel booking of a double room
-        System.out.println("Cancelling booking for double room..." + roomNumber);
-        isAvailable = true;
+        this.roomContext.cancelBooking();
     }
 
     @Override

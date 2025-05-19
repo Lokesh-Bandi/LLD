@@ -91,6 +91,8 @@ public class MainController {
             BookingCommand bookingCommand = new BookingCommand(booking);
             bookingManager.executeCommand(bookingCommand);
 
+            bookingManager.executeCommand(bookingCommand);
+
             NotificationDTO notificationDTO = new NotificationDTO.Builder()
                                                         .recipient(booking.getCustomer().getEmail())
                                                         .subject("Booking Confirmation!!")

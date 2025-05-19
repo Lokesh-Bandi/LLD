@@ -9,20 +9,12 @@ public class SingleRoom extends Room{
 
     @Override
     public void book() {
-        // Logic to book a single room
-        if(!isAvailable){
-            System.out.println("Single room is not available.");
-        } else {
-            System.out.println("Booking single room..." + roomNumber);
-            isAvailable = false;
-        }
+        this.roomContext.book();
     }
 
     @Override
     public void cancelBooking() {
-        // Logic to cancel booking of a single room
-        System.out.println("Cancelling booking for single room..." + roomNumber);
-        isAvailable = true;
+        this.roomContext.cancelBooking();
     }
 
     @Override

@@ -8,20 +8,12 @@ public class SuiteRoom extends Room{
 
     @Override
     public void book() {
-        // Logic to book a suite room
-        if(!isAvailable){
-            System.out.println("Suite room is not available.");
-        } else {
-            System.out.println("Booking suite room..." + roomNumber);
-            isAvailable = false;
-        }
+        this.roomContext.book();
     }
 
     @Override
     public void cancelBooking() {
-        // Logic to cancel booking of a suite room
-        System.out.println("Cancelling booking for suite room..." + roomNumber);
-        isAvailable = true;
+        this.roomContext.cancelBooking();
     }
 
     @Override
