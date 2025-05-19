@@ -1,6 +1,9 @@
 package com.example.hotel_management_system;
 
 import com.example.hotel_management_system.Customer.Customer;
+import com.example.hotel_management_system.actions.CheckInTemplate;
+import com.example.hotel_management_system.actions.RegularCheckIn;
+import com.example.hotel_management_system.actions.VIPCheckIn;
 import com.example.hotel_management_system.booking.Booking;
 import com.example.hotel_management_system.booking.BookingDTO;
 import com.example.hotel_management_system.command.BookingManager;
@@ -189,6 +192,23 @@ public class MainController {
             System.out.println("Luxury Package Services cost: " + servicePackage.getCost());
 
             return ResponseEntity.ok("Services initialized successfully");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @GetMapping("/rooms/check-in/{checkInType}")
+    public ResponseEntity<String> checkIn(@PathVariable String checkInType) {
+        try {
+            CheckInTemplate checkInTemplate = switch (checkInType) {
+                case "regular" -> new RegularCheckIn();
+                case "vip" -> new VIPCheckIn();
+                default -> throw new IllegalArgumentException("Invalid check-in type");
+            };
+
+            checkInTemplate.checkIn();
+
+            return ResponseEntity.ok("Check-in process completed successfully");
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
