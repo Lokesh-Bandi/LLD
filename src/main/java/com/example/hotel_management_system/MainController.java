@@ -28,6 +28,8 @@ import com.example.hotel_management_system.payment.*;
 import com.example.hotel_management_system.payment.gateway.PaypalGateway;
 import com.example.hotel_management_system.payment.gateway.RazorpayGateway;
 import com.example.hotel_management_system.payment.gateway.StripeGateway;
+import com.example.hotel_management_system.services.IndividualService;
+import com.example.hotel_management_system.services.ServicePackage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -167,5 +169,28 @@ public class MainController {
         Notification notification = notificationFactory.createNotification();
         notification.sendNotification();
         return ResponseEntity.ok(notification.toString());
+    }
+
+    @GetMapping("/services/init")
+    public ResponseEntity<String> initServices() {
+        try {
+            // Initialize services
+            IndividualService spaService = new IndividualService("SPA", 100);
+            IndividualService swimmingPoolService = new IndividualService("Swimming pool ", 200);
+            IndividualService gymService = new IndividualService("GYM", 300);
+
+            ServicePackage servicePackage = new ServicePackage("Luxury Package");
+            servicePackage.addService(spaService);
+            servicePackage.addService(swimmingPoolService);
+            servicePackage.addService(gymService);
+
+            // Print service details
+            System.out.println("Service Package: " + servicePackage.getServiceName());
+            System.out.println("Luxury Package Services cost: " + servicePackage.getCost());
+
+            return ResponseEntity.ok("Services initialized successfully");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
